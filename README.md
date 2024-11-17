@@ -3,6 +3,12 @@ This web app takes your resume and a job description and generates a cover lette
 
 The app also uses AWS DynamoDB to store user data for authentication and cover letters. The app also uses AWS Amplify for running GraphQL queries to DynamoDB
 
+
+
+https://github.com/user-attachments/assets/f7ccd1cd-365c-4150-8abd-4dbbac09a733
+
+
+
 ## Technologies Used
 - Next.js
 - Chakra UI
