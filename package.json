@@ -17,6 +17,8 @@
     "@chakra-ui/next-js": "^2.4.2",
     "@chakra-ui/react": "^3.1.1",
     "@emotion/react": "^11.13.3",
+    "@vercel/analytics": "^1.4.0",
+    "@vercel/speed-insights": "^1.1.0",
     "aws-amplify": "^6.8.2",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
