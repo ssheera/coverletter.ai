@@ -64,6 +64,10 @@ export const processResume = async (user: User, resumePath: string, description:
 
     await openai.beta.assistants.del(assistant.id)
 
+    if (content.type !== 'text') {
+        throw new Error('Invalid response')
+    }
+
     const coverLetter = JSON.parse(content.text.value)
     const response: CoverLetter = {
         date: Date.now(),
