@@ -1,4 +1,6 @@
 # coverletter.ai
+https://coverletter-ai-ruddy.vercel.app/
+
 This web app takes your resume and a job description and generates a cover letter for you. It uses openai's gpt-4o-mini model to generate the cover letter. The app is built with Next.js and using Chakra UI for styling. The app is deployed on Vercel.
 
 The app also uses AWS DynamoDB to store user data for authentication and cover letters. The app also uses AWS Amplify for running GraphQL queries to DynamoDB
