@@ -25,6 +25,7 @@ const NavLink: React.FC<{ href: string, children: React.ReactNode }> = ({ href, 
         px={2}
         py={1}
         rounded={'md'}
+        fontSize='xs'
         _hover={{
             textDecoration: 'none',
         }}
@@ -36,7 +37,7 @@ const NavLink: React.FC<{ href: string, children: React.ReactNode }> = ({ href, 
 
 const Navbar: React.FC = () => {
     return (
-        <Box px={4} position='absolute' w='100%' shadow='lg'>
+        <Box px={4} position='absolute' w='100%' shadow='lg' zIndex={2}>
             <Flex h={16} alignItems='center' justifyContent='space-between'>
                 <HStack alignItems='center'>
                     <HStack as='nav' display='flex'>
