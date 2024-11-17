@@ -3,6 +3,61 @@ This web app takes your resume and a job description and generates a cover lette
 
 The app also uses AWS DynamoDB to store user data for authentication and cover letters. The app also uses AWS Amplify for running GraphQL queries to DynamoDB
 
+## Technologies Used
+- Next.js
+- Chakra UI
+- OpenAI
+- AWS DynamoDB
+- AWS Amplify
+- TypeScript
+
+## Configuration
+
+- Create DynamoDB table with 'uid' as the primary key
+- Use the following GraphQL schema
+```graphql
+type CoverLetter {
+	company: String!
+	content: String!
+	date: Float!
+	job: String!
+}
+
+type User {
+	email: String
+	uid: String!
+	coverLetters: [CoverLetter]
+}
+
+type Query {
+	getUser(uid: String!): User
+}
+```
+- The resolver code is just the 'GetItem' sample with a changed primary key
+```javascript
+import { util } from '@aws-appsync/utils';
+
+/**
+ * Sends a request to get an item with id `ctx.args.id`
+ * @param {import('@aws-appsync/utils').Context} ctx the context
+ * @returns {import('@aws-appsync/utils').DynamoDBGetItemRequest} the request
+ */
+export function request(ctx) {
+    return {
+        operation: 'GetItem',
+        key: util.dynamodb.toMapValues({ uid: ctx.args.uid }),
+    };
+}
+
+/**
+ * Returns the fetched DynamoDB item
+ * @param {import('@aws-appsync/utils').Context} ctx the context
+ * @returns {*} the DynamoDB item
+ */
+export function response(ctx) {
+    return ctx.result;
+}
+```
 
 ## Getting Started
 
