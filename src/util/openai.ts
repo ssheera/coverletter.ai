@@ -1,16 +1,17 @@
 import OpenAI from 'openai'
 import { CoverLetter } from '@/interfaces/CoverLetter'
 import fs from 'fs'
-import { User } from "@/interfaces/User";
-import { updateUser } from "@/util/dynamo";
+import { User } from '@/interfaces/User'
+import { updateUser } from '@/util/dynamo'
 
 export const openai = new OpenAI()
 
 export const processResume = async (user: User, resumePath: string, description: string) => {
 
-    const assistant = await openai.beta.assistants.create({
-        name: 'Cover Letter Assistant',
-        instructions: `
+    const [assistant, resumeFile] = await Promise.all([
+        openai.beta.assistants.create({
+            name: 'Cover Letter Assistant',
+            instructions: `
                         You will be given a resume file and a job description. Your task is to write a cover letter based on the resume and job description. 
 
                         The cover letter should be tailored to the job description and should highlight the candidate's skills and experience.
@@ -29,15 +30,43 @@ export const processResume = async (user: User, resumePath: string, description:
                         9. Sincerely,
                         10. Your Name
                         
-                        You must then reply in JSON format: { "company": [company], "job": [the job title], "content": [the cover letter] }
-                        RAW JSON, NO FORMATTING, NO \`\`\`, NO MARKDOWN
-                        MAKE SURE IT PARSES CORRECTLY WITH JSON.parse()
+                        Response format must be RAW JSON SCHEMA,
+                        Do not use MARKDOWN or \`\`\` code blocks!
+                            
+                        {
+                            "name": "cover_letter",
+                            "strict": true,
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "company": {
+                                        "type": "string",
+                                        "description": "The name of the company to which the cover letter is addressed."
+                                    },
+                                    "job": {
+                                        "type": "string",
+                                        "description": "The job title for the position being applied for."
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "description": "The content of the cover letter."
+                                    }
+                                },
+                                "required": [
+                                    "company",
+                                    "job",
+                                    "content"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                        
                         `,
-        model: 'gpt-4o-mini',
-        tools: [{ type: 'file_search' }],
-    })
-
-    const resumeFile = await openai.files.create({ file: fs.createReadStream(resumePath), purpose: 'assistants' })
+            model: 'gpt-4o-mini',
+            tools: [{ type: 'file_search' }],
+        }),
+        openai.files.create({ file: fs.createReadStream(resumePath), purpose: 'assistants' })
+    ])
 
     const thread = await openai.beta.threads.create({
         messages: [
@@ -51,18 +80,21 @@ export const processResume = async (user: User, resumePath: string, description:
 
     const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
         assistant_id: assistant.id,
-    });
+    })
 
     const messages = await openai.beta.threads.messages.list(thread.id, {
         run_id: run.id,
-    });
+    })
 
-    const message = messages.data.pop()!;
+    const message = messages.data.pop()!
+
     const content = message.content[0]
 
-    await openai.files.del(resumeFile.id)
-
-    await openai.beta.assistants.del(assistant.id)
+    await Promise.all([
+        openai.files.del(resumeFile.id),
+        openai.beta.assistants.del(assistant.id),
+        openai.beta.threads.del(thread.id)
+    ])
 
     if (content.type !== 'text') {
         throw new Error('Invalid response')

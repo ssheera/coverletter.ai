@@ -15,9 +15,7 @@ Amplify.configure({
 
 export const getUserGraph = async (uid: string) => {
 
-    const client = generateClient({
-        authMode: 'apiKey'
-    })
+    const client = generateClient()
 
     return await client.graphql({
         query: getUser,

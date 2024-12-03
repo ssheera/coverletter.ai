@@ -1,12 +1,16 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { parseForm } from '@/util/forms'
-import { scanDatabase } from '@/util/dynamo'
-import { processResume } from "@/util/openai";
-import fs from "fs";
-import { User } from "@/interfaces/User";
+import {NextApiRequest, NextApiResponse} from 'next'
+import {parseForm} from '@/util/forms'
+import {scanDatabase} from '@/util/dynamo'
+import {processResume} from '@/util/openai'
+import fs from 'fs'
+import {User} from '@/interfaces/User'
+import PQueue from 'p-queue'
+import os from 'os'
+
+const resumeQueue = new PQueue({ concurrency: os.cpus().length })
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' })
     }
@@ -46,9 +50,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const user = record as User
 
-        const response = await processResume(user, filePath, description)
+        resumeQueue.add(() => processResume(user, filePath, description))
+            .then(response => {
+                res.status(201).json({ response })
+            })
+            .catch(error => {
+                console.error('Error processing resume:', error)
+                res.status(500).json({ message: 'An error occurred' })
+            })
 
-        return res.status(201).json({ response })
     } catch (error) {
         console.error('Error uploading file:', error)
         return res.status(500).json({ message: 'An error occurred' })
@@ -58,5 +68,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 export const config = {
     api: {
         bodyParser: false,
-    },
-};
+    }
+}
