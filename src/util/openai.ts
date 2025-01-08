@@ -3,67 +3,63 @@ import { CoverLetter } from '@/interfaces/CoverLetter'
 import fs from 'fs'
 import { User } from '@/interfaces/User'
 import { updateUser } from '@/util/dynamo'
+import {getSignedUrlForFile} from "@/util/bucket";
 
 export const openai = new OpenAI()
 
-export const processResume = async (user: User, resumePath: string, description: string) => {
+export const processResume = async (user: User, resumePath: string, description: string, customPrompt: string) => {
+
+    const presetURL = await getSignedUrlForFile('prompt.txt')
+    const presetPrompt = await fetch(presetURL).then(res => res.text())
+
+    let prompt = 'I DON\'T NEED ANY CITATIONS\n'
+
+    if (customPrompt) {
+        prompt += customPrompt + '\n'
+    } else {
+        prompt += presetPrompt + '\n'
+    }
+
+    prompt += '\n' +
+        'Response format must be RAW JSON SCHEMA,\n' +
+        'Do not use MARKDOWN or ``` code blocks!\n' +
+        '    \n' +
+        '{\n' +
+        '    "name": "result",\n' +
+        '    "strict": true,\n' +
+        '    "schema": {\n' +
+        '        "type": "object",\n' +
+        '        "properties": {\n' +
+        '            "company": {\n' +
+        '                "type": "string",\n' +
+        '                "description": "The name of the company that is addressed."\n' +
+        '            },\n' +
+        '            "job": {\n' +
+        '                "type": "string",\n' +
+        '                "description": "The job title for the position being applied for."\n' +
+        '            },\n' +
+        '            "content": {\n' +
+        '                "type": "string",\n' +
+        '                "description": "The content of the answer\n' +
+        '            }\n' +
+        '        },\n' +
+        '        "required": [\n' +
+        '            "company",\n' +
+        '            "job",\n' +
+        '            "content"\n' +
+        '        ],\n' +
+        '        "additionalProperties": false\n' +
+        '    }\n' +
+        '}'
 
     const [assistant, resumeFile] = await Promise.all([
         openai.beta.assistants.create({
-            name: 'Cover Letter Assistant',
-            instructions: `
-                        You will be given a resume file and a job description. Your task is to write a cover letter based on the resume and job description. 
-
-                        The cover letter should be tailored to the job description and should highlight the candidate's skills and experience.
-                        
-                        I DON'T NEED ANY CITATIONS, IMAGINE HIRING MANAGER WILL READ THE LETTER
-                        
-                        Follow this structure: 
-                        1. Introduction
-                        2. Why I am the perfect candidate
-                        3. Why this is the perfect role for me
-                        4. Why I am the perfect candidate for this role with some context to the role
-                        5. Talk about anything the company has done or is doing and why you are interested in it
-                        6. Talk about your skills and experience, EMPHASISE on PAST WORK EXPERIENCE
-                        7. Closing
-                        8. Thank you for considering my application
-                        9. Sincerely,
-                        10. Your Name
-                        
-                        Response format must be RAW JSON SCHEMA,
-                        Do not use MARKDOWN or \`\`\` code blocks!
-                            
-                        {
-                            "name": "cover_letter",
-                            "strict": true,
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "company": {
-                                        "type": "string",
-                                        "description": "The name of the company to which the cover letter is addressed."
-                                    },
-                                    "job": {
-                                        "type": "string",
-                                        "description": "The job title for the position being applied for."
-                                    },
-                                    "content": {
-                                        "type": "string",
-                                        "description": "The content of the cover letter."
-                                    }
-                                },
-                                "required": [
-                                    "company",
-                                    "job",
-                                    "content"
-                                ],
-                                "additionalProperties": false
-                            }
-                        }
-                        
-                        `,
+            name: 'Assistant',
+            instructions: prompt,
             model: 'gpt-4o-mini',
             tools: [{ type: 'file_search' }],
+            temperature: 0.8,
+
         }),
         openai.files.create({ file: fs.createReadStream(resumePath), purpose: 'assistants' })
     ])

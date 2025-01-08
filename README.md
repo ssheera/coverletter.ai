@@ -67,6 +67,8 @@ export function response(ctx) {
 }
 ```
 
+- Setup S3 bucket on AWS and upload the cover letter template as prompt.txt
+
 ## Getting Started
 
 First, run the development server:

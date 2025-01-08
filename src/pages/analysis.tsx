@@ -1,10 +1,10 @@
 import {
     Box,
-    Container,
-    Flex,
+    Container, Flex,
+    Grid, GridItem,
     Heading,
     Text,
-    Textarea,
+    Textarea, useBreakpointValue,
     useDisclosure,
 } from '@chakra-ui/react'
 import { Toaster, toaster } from '@/components/ui/toaster'
@@ -21,8 +21,11 @@ export default function AnalysisPage() {
     const { open, onOpen, onClose } = useDisclosure()
     const [resume, setResume] = useState<File | null>(null)
     const [jobDescription, setJobDescription] = useState('')
+    const [prompt, setPrompt] = useState('')
     const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
+
+    const gridTemplate = useBreakpointValue({ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' })
 
     const axios = createAxios()
 
@@ -50,6 +53,10 @@ export default function AnalysisPage() {
         setJobDescription(event.target.value)
     }
 
+    const handlePromptChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setPrompt(event.target.value)
+    }
+
     const generateCoverLetter = async () => {
         if (!resume || !jobDescription) return
         try {
@@ -59,6 +66,9 @@ export default function AnalysisPage() {
             formData.append('token', token as string)
             formData.append('file', resume, 'resume')
             formData.append('description', jobDescription)
+            if (prompt) {
+                formData.append('prompt', prompt)
+            }
             const res = await axios.post('/api/process', formData)
             if (res.status == 201) {
                 setCoverLetter(res.data.response)
@@ -92,8 +102,12 @@ export default function AnalysisPage() {
     return (
         <Container maxW='7xl' py={20}>
             <Toaster/>
-            <Flex direction={['column', 'row']} justify='space-between' align='start' gap={8}>
-                <Box
+
+            <Grid
+                templateColumns={gridTemplate}
+                gap='8'>
+
+                <GridItem
                     flex={1}
                     p={6}
                     shadow='lg'
@@ -116,12 +130,15 @@ export default function AnalysisPage() {
                         />
                         <FileUploadList showSize clearable />
                     </FileUploadRoot>
-                </Box>
+                </GridItem>
 
-                <Box
+                <GridItem
                     flex={1}
                     p={6}
                     shadow='lg'
+                    rowSpan={2}
+                    display="flex"
+                    flexDirection="column"
                 >
                     <Heading size='lg' mb={4}>
                         Job Description
@@ -136,21 +153,51 @@ export default function AnalysisPage() {
                         onChange={handleJobDescriptionChange}
                         placeholder='Paste the job description here'
                         size='lg'
+                        minHeight='400px'
                         mb={4}
-                        h='300px'
+                        flex={1}
                     />
-                    <Button
-                        onClick={generateCoverLetter}
-                        loading={isProcessing}
-                        loadingText='Processing'
-                        disabled={!resume || !jobDescription}
-                    >
-                        Process
-                    </Button>
-                </Box>
-            </Flex>
+                    <Flex>
+                        <Button
+                            onClick={generateCoverLetter}
+                            loading={isProcessing}
+                            loadingText='Processing'
+                            disabled={!resume || !jobDescription}
+                        >
+                            Process
+                        </Button>
+                    </Flex>
+                </GridItem>
 
-            <CoverLetterDialog data={coverLetter} open={open} onClose={onClose} />
+                <GridItem
+                    flex={1}
+                    p={6}
+                    shadow='lg'
+                >
+                    <Heading size='lg' mb={4}>
+                        AI Prompt
+                    </Heading>
+                    <Text fontSize='sm' color='gray' mb={4}>
+                        Enter in a custom prompt if you wish, this will be used instead of the preset prompt
+                    </Text>
+                    <Textarea
+                        resize='none'
+                        fontSize='sm'
+                        value={prompt}
+                        onChange={handlePromptChange}
+                        placeholder='Enter a custom prompt here'
+                        size='lg'
+                        mb={4}
+                        h='200px'
+                    />
+                </GridItem>
+
+            </Grid>
+
+
+            { coverLetter && open && (
+                <CoverLetterDialog data={coverLetter} open={open} onClose={onClose} />
+            )}
 
         </Container>
     )

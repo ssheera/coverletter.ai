@@ -22,6 +22,7 @@
     "aws-amplify": "^6.8.2",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "docx": "^9.1.0",
     "formidable": "^3.5.2",
     "nanoid": "^5.0.8",
     "next": "latest",

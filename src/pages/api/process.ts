@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const token = fields.token[0] as string
         const description = fields.description[0] as string
+        const prompt = fields.prompt ? fields.prompt[0] as string : ''
 
         if (!files.file || files.file.length !== 1) {
             return res.status(400).json({ message: 'Missing resume to upload' })
@@ -50,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const user = record as User
 
-        resumeQueue.add(() => processResume(user, filePath, description))
+        resumeQueue.add(() => processResume(user, filePath, description, prompt))
             .then(response => {
                 res.status(201).json({ response })
             })

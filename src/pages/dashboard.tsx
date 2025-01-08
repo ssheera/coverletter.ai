@@ -149,10 +149,15 @@ export default function DashboardPage() {
                         </Table.Root>
 
                         <PaginationRoot
+                            size='xs'
                             page={page}
                             count={userDetails.coverLetters.length}
                             pageSize={pageSize}
                             onPageChange={(e) => setPage(e.page)}
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center'
+                            }}
                         >
                             <HStack>
                                 <PaginationPrevTrigger />
@@ -169,7 +174,9 @@ export default function DashboardPage() {
                 />
             ) }
 
-            <CoverLetterDialog data={selectedLetter} open={open} onClose={onClose} />
+            { selectedLetter && open && (
+                <CoverLetterDialog data={selectedLetter} open={open} onClose={onClose} />
+            )}
 
         </Container>
     )
