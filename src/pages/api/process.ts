@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from 'next'
 import {parseForm} from '@/util/forms'
 import {scanDatabase} from '@/util/dynamo'
-import {processResume} from '@/util/openai'
+import {processResume} from '@/util/llm'
 import fs from 'fs'
 import {User} from '@/interfaces/User'
 import PQueue from 'p-queue'
@@ -19,12 +19,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const { fields, files } = await parseForm(req)
 
-        if (!fields || !fields.token || !fields.description) {
+        if (!fields || !fields.token || !fields.description || !fields.llm) {
             return res.status(400).json({ message: 'Unauthorised' })
         }
 
         const token = fields.token[0] as string
         const description = fields.description[0] as string
+        const llm = fields.llm ? fields.llm[0] as string : ''
         const prompt = fields.prompt ? fields.prompt[0] as string : ''
 
         if (!files.file || files.file.length !== 1) {
@@ -51,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const user = record as User
 
-        resumeQueue.add(() => processResume(user, filePath, description, prompt))
+        resumeQueue.add(() => processResume(user, filePath, description, prompt, llm))
             .then(response => {
                 res.status(201).json({ response })
             })

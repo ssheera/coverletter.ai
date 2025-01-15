@@ -15,7 +15,7 @@ import {
     PaginationPrevTrigger,
     PaginationRoot,
 } from '@/components/ui/pagination'
-import React, { useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import { useRouter } from 'next/router'
 import { UserDetails } from '@/interfaces/UserDetails'
 import { CoverLetter } from '@/interfaces/CoverLetter'
@@ -30,26 +30,27 @@ import { HiColorSwatch } from 'react-icons/hi'
 
 export default function DashboardPage() {
     const { open, onOpen, onClose } = useDisclosure()
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
     const [selectedLetter, setSelectedLetter] = useState<CoverLetter | null>(null)
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState(1)
+    const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+
     const router = useRouter()
     const axios = createAxios()
 
     const pageSize = 10
 
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (!token) {
-            location.href = '/login'
-            return
-        }
-        const fetchData = async () => {
+    const fetchData = useMemo(() => {
+        return async () => {
+            const token = localStorage.getItem('token')
+            if (!token) {
+                location.href = '/login'
+                return
+            }
+
             try {
-                const token = localStorage.getItem('token')
                 const res = await axios.post('/api/account', { token })
-                if (res.status == 200) {
+                if (res.status === 200) {
                     setUserDetails(res.data.user)
                     toaster.create({
                         title: 'Success',
@@ -74,9 +75,16 @@ export default function DashboardPage() {
                 console.error('An error occurred:', error)
             }
         }
-        if (!userDetails)
-            fetchData().then(r => r)
-    }, [axios, userDetails])
+    }, [])
+
+    useEffect(() => {
+        if (!userDetails) {
+            fetchData()
+                .catch((error) => {
+                    console.error('An error occurred:', error)
+                })
+        }
+    }, [fetchData, userDetails])
 
     const handleLogout = async () => {
         localStorage.removeItem('token')
