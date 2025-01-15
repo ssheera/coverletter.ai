@@ -15,7 +15,7 @@ import {
     PaginationPrevTrigger,
     PaginationRoot,
 } from '@/components/ui/pagination'
-import React, {useCallback, useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import { useRouter } from 'next/router'
 import { UserDetails } from '@/interfaces/UserDetails'
 import { CoverLetter } from '@/interfaces/CoverLetter'
@@ -75,7 +75,7 @@ export default function DashboardPage() {
                 console.error('An error occurred:', error)
             }
         }
-    }, [])
+    }, [axios])
 
     useEffect(() => {
         if (!userDetails) {
