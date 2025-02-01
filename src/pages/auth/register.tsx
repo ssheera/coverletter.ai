@@ -36,7 +36,7 @@ export default function RegisterPage() {
                     duration: 3000,
                 })
                 setTimeout(async () => {
-                    await router.push('/login')
+                    await router.push('/auth/login')
                 }, 1000)
             } else {
                 toaster.error({

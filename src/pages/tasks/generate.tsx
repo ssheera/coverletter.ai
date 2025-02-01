@@ -48,21 +48,11 @@ function AnalysisPage() {
     const [llm, setLLM] = useState('Gemini')
     const [step, setStep] = useState(0)
 
-    const auth = useAuth()
-
-    const router = useRouter()
-
     const apis = createListCollection({
         items: ['Gemini'],
     })
 
     const axios = createAxios()
-
-    useEffect(() => {
-        if (!auth.loading && !auth.isAuthenticated) {
-            router.push('/login').catch(console.error)
-        }
-    }, [auth.isAuthenticated, auth.loading, router])
 
     const handleResumeChange = (details: FileChangeDetails) => {
         if (details.acceptedFiles) {
