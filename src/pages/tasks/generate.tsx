@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
-import React, {useEffect, useState} from 'react'
+import React, { useState } from 'react'
 import { CoverLetter } from '@/interfaces/CoverLetter'
 import { createAxios } from '@/lib/axios'
 import { FileUploadDropzone, FileUploadList, FileUploadRoot } from '@/components/ui/file-button'
@@ -26,8 +26,6 @@ import {
     StepsRoot,
     StepsPrevTrigger
 } from '@/components/ui/steps'
-import {useAuth} from '@/context/AuthProvider'
-import {useRouter} from 'next/router'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function ProtectedAnalysisPage() {

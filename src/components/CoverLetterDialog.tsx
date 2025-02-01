@@ -1,5 +1,5 @@
 import React from 'react'
-import {Box, Text, useBreakpointValue} from '@chakra-ui/react'
+import {Box, IconButton, Text, useBreakpointValue} from '@chakra-ui/react'
 import {
     DialogBody,
     DialogCloseTrigger,
@@ -9,12 +9,11 @@ import {
     DialogRoot,
     DialogTitle
 } from '@/components/ui/dialog'
-import { DataListItem, DataListRoot } from '@/components/ui/data-list'
-import { ClipboardButton, ClipboardRoot } from '@/components/ui/clipboard'
-import { CoverLetter } from '@/interfaces/CoverLetter'
-import { Button } from '@/components/ui/button'
-import { PiMicrosoftWordLogoFill } from 'react-icons/pi'
-import { Document, Packer, Paragraph, TextRun } from 'docx'
+import {DataListItem, DataListRoot} from '@/components/ui/data-list'
+import {ClipboardButton, ClipboardRoot} from '@/components/ui/clipboard'
+import {CoverLetter} from '@/interfaces/CoverLetter'
+import {PiMicrosoftWordLogoFill} from 'react-icons/pi'
+import {Document, Packer, Paragraph, TextRun} from 'docx'
 
 const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: CoverLetter }> = ({
                                                                                                            open,
@@ -23,6 +22,30 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                                                                                                        }) => {
 
     const dialogSize: 'xs' | 'lg' = useBreakpointValue({ base: 'xs', md: 'lg' })!
+
+    const createDocument = async () => {
+        const content = data.contents.split('\n')
+
+        const doc = new Document({
+            sections: [
+                {
+                    children: content.map((line) => {
+                        return new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: line,
+                                    font: 'Aptos',
+                                    size: 22
+                                })
+                            ]
+                        })
+                    })
+                }
+            ]
+        })
+
+        return await Packer.toBuffer(doc)
+    }
 
     return <Box>
         <DialogRoot scrollBehavior='inside'  size={dialogSize} open={open}
@@ -51,31 +74,11 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                     <ClipboardRoot value={data.contents} timeout={500}>
                         <ClipboardButton size='xs'/>
                     </ClipboardRoot>
-                    <Button
+                    <IconButton
                         size='xs'
                         variant='surface'
                         onClick={async () => {
-                            const content = data.contents.split('\n')
-
-                            const doc = new Document({
-                                sections: [
-                                    {
-                                        children: content.map((line) => {
-                                            return new Paragraph({
-                                                children: [
-                                                    new TextRun({
-                                                        text: line,
-                                                        font: 'Aptos',
-                                                        size: 22
-                                                    })
-                                                ]
-                                            })
-                                        })
-                                    }
-                                ]
-                            })
-
-                            const buffer = await Packer.toBuffer(doc)
+                            const buffer = await createDocument()
                             const blob = new Blob([buffer], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
                             const url = URL.createObjectURL(blob)
                             const a = document.createElement('a')
@@ -84,7 +87,7 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                             a.click()
                         }}>
                         <PiMicrosoftWordLogoFill color='#41A5EE'/>
-                    </Button>
+                    </IconButton>
                 </DialogFooter>
             </DialogContent>
         </DialogRoot>
