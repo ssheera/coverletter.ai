@@ -26,7 +26,47 @@ The project is then deployed on Vercel
    terraform init
    terraform apply
    ```
-3. Create .env file in the root directory and add the following
+3. Create a database in the RDS instance using this script
+    ```sql
+    create table if not exists users
+   (
+   id       serial
+   primary key,
+   email    text not null,
+   password text not null,
+   data     json
+   );
+   
+   create table if not exists coverletters
+   (
+   id        serial
+   primary key,
+   user_fk   integer
+   constraint user_fk
+   references users
+   on delete set null,
+   company   text,
+   job_title text,
+   contents  text,
+   date      date
+   );
+   
+   create index if not exists user_fk
+   on coverletters (user_fk);
+   
+   create table if not exists sessions
+   (
+   sid    varchar(255) not null
+   primary key,
+   sess   json         not null,
+   expire timestamp    not null
+   );
+   
+   create index if not exists idx_sessions_expire
+   on sessions (expire);
+
+   ```
+4. Create .env file in the root directory and add the following
    ```sh
    NODE_ENV=development
    AWS_ACCESS_KEY_ID=your_aws_access_key_id
@@ -40,12 +80,12 @@ The project is then deployed on Vercel
    OPENAI_API_KEY=your_openai_api_key
    GEMINI_API_KEY=your_gemini_api_key
    ```
-4. Install NPM packages
+5. Install NPM packages
    ```sh
     npm install
     ```
-5. Run the project
+6. Run the project
     ```sh
      npm run dev
      ```
-6. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+7. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
