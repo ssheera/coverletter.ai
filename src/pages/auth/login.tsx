@@ -6,38 +6,42 @@ import {
     Text,
     Center
 } from '@chakra-ui/react'
-import { Toaster, toaster } from "@/components/ui/toaster"
-import { Button } from "@/components/ui/button"
+import { Toaster, toaster } from '@/components/ui/toaster'
+import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { createAxios } from '@/util/axios'
-import { Field } from "@/components/ui/field";
-import { PasswordInput } from "@/components/ui/password-input";
+import { createAxios } from '@/lib/axios'
+import { Field } from '@/components/ui/field'
+import { PasswordInput } from '@/components/ui/password-input'
+import {useAuth} from '@/context/AuthProvider'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+    const auth = useAuth()
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
+
         setIsLoading(true)
 
         try {
             const axios = createAxios()
-            const res = await axios.post('/api/login', { email, password })
+            const res = await axios.post('/api/auth/login', { email, password })
 
             if (res.status == 200) {
                 toaster.create({
                     title: 'Success',
-                    description: 'You can now access your account',
+                    description: 'You can now access your user',
                     type: 'success',
                     duration: 3000,
                 })
-                localStorage.setItem('token', res.data.token)
                 setTimeout(async () => {
-                    await router.push('/analysis')
+                    auth.refreshAuth().then(() => {
+                        router.push('/')
+                    })
                 }, 1000)
             } else {
                 toaster.error({
@@ -77,7 +81,7 @@ export default function LoginPage() {
                 <Box mt={6} as='form' onSubmit={handleLogin}>
                     <Stack>
 
-                        <Field required label="Email">
+                        <Field required label='Email'>
                             <Input
                                 id='email'
                                 type='email'
@@ -88,7 +92,7 @@ export default function LoginPage() {
                             />
                         </Field>
 
-                        <Field required label="Password">
+                        <Field required label='Password'>
                             <PasswordInput
                                 id='password'
                                 type='password'
@@ -115,7 +119,7 @@ export default function LoginPage() {
                     <a style={{
                         paddingLeft: '0.5rem',
                         cursor: 'pointer'
-                    }} onClick={() => router.push('/register')}>
+                    }} onClick={() => router.push('/auth/register')}>
                         Register
                     </a>
                 </Text>

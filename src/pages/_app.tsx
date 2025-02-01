@@ -5,15 +5,23 @@ import { ColorModeProvider } from '@/components/ui/color-mode'
 import { system } from '@/theme'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import Head from 'next/head'
+import { AuthProvider } from '@/context/AuthProvider'
 
 function App({ Component }: AppProps) {
     return (
         <ChakraProvider value={system}>
-            <Analytics/>
-            <SpeedInsights/>
-            <ColorModeProvider/>
-            <Navbar/>
-            <Component/>
+            <AuthProvider>
+                <Head>
+                    <meta name='description' content='applying to jobs made easy' />
+                    <link rel='icon' href='/vercel.svg' />
+                </Head>
+                <Analytics/>
+                <SpeedInsights/>
+                <ColorModeProvider/>
+                <Navbar/>
+                <Component/>
+            </AuthProvider>
         </ChakraProvider>
     )
 }

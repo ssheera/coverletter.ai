@@ -1,9 +1,15 @@
-import { CoverLetter } from "@/interfaces/CoverLetter";
+import { CoverLetter } from '@/interfaces/CoverLetter'
 
 export interface User {
-    uid: string,
+    id: number,
     email: string,
     password: string,
-    token: string,
+    data: string
+}
+
+export type ClientUser = Omit<Omit<User, 'password'>, 'data'>
+
+// User but with more fields
+export type AccountUser = ClientUser & {
     coverLetters: CoverLetter[]
 }

@@ -1,88 +1,51 @@
 # coverletter.ai
 https://coverletter-ai-ruddy.vercel.app/
 
-This web app takes your resume and a job description and generates a cover letter for you. It uses openai's gpt-4o-mini model to generate the cover letter. The app is built with Next.js and using Chakra UI for styling. The app is deployed on Vercel.
-
-The app also uses AWS DynamoDB to store user data for authentication and cover letters. The app also uses AWS Amplify for running GraphQL queries to DynamoDB
-
-
-
-https://github.com/user-attachments/assets/f7ccd1cd-365c-4150-8abd-4dbbac09a733
-
-
-
-## Technologies Used
-- Next.js
-- Chakra UI
-- OpenAI
-- AWS DynamoDB
-- AWS Amplify
-- TypeScript
-
-## Configuration
-
-- Create DynamoDB table with 'uid' as the primary key
-- Use the following GraphQL schema
-```graphql
-type CoverLetter {
-	company: String!
-	content: String!
-	date: Float!
-	job: String!
-}
-
-type User {
-	email: String
-	uid: String!
-	coverLetters: [CoverLetter]
-}
-
-type Query {
-	getUser(uid: String!): User
-}
-```
-- The resolver code is just the 'GetItem' sample with a changed primary key
-```javascript
-import { util } from '@aws-appsync/utils';
-
-/**
- * Sends a request to get an item with id `ctx.args.id`
- * @param {import('@aws-appsync/utils').Context} ctx the context
- * @returns {import('@aws-appsync/utils').DynamoDBGetItemRequest} the request
- */
-export function request(ctx) {
-    return {
-        operation: 'GetItem',
-        key: util.dynamodb.toMapValues({ uid: ctx.args.uid }),
-    };
-}
-
-/**
- * Returns the fetched DynamoDB item
- * @param {import('@aws-appsync/utils').Context} ctx the context
- * @returns {*} the DynamoDB item
- */
-export function response(ctx) {
-    return ctx.result;
-}
-```
-
-- Setup S3 bucket on AWS and upload the cover letter template as prompt.txt
+## Table of Contents
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
 
 ## Getting Started
+This project provides an LLM-based AI model that generates cover letters for job applications and resumes
 
-First, run the development server:
+The project uses PostegreSQL as the database from AWS RDS and Next.js as both the frontend and backend. It also uses AWS S3 to store LLM prompts, other functionality is planned so that the user can upload/save their own prompts
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The project is then deployed on Vercel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `src/pages/index.tsx`. The page auto-updates as you edit the file.
+## Installation
+1. Clone the repo
+   ```sh
+   git clone https://github.com/ssheera/coverletter.ai.git
+    ```
+2. Run the terraform script
+   ```sh
+   cd coverletter.ai/terraform
+   terraform init
+   terraform apply
+   ```
+3. Create .env file in the root directory and add the following
+   ```sh
+   NODE_ENV=development
+   AWS_ACCESS_KEY_ID=your_aws_access_key_id
+   AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+   AWS_REGION=your_aws_region
+   AWS_BUCKET_NAME=your_aws_bucket_name
+   RDS_ENDPOINT=your_rds_endpoint
+   RDS_USER=your_rds_user
+   RDS_PASSWORD=your_rds_password
+   RDS_DATABASE=your_rds_database
+   OPENAI_API_KEY=your_openai_api_key
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+4. Install NPM packages
+   ```sh
+    npm install
+    ```
+5. Run the project
+    ```sh
+     npm run dev
+     ```
+6. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.

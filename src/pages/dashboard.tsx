@@ -16,51 +16,51 @@ import {
     PaginationRoot,
 } from '@/components/ui/pagination'
 import React, {useEffect, useMemo, useState} from 'react'
-import { useRouter } from 'next/router'
-import { UserDetails } from '@/interfaces/UserDetails'
 import { CoverLetter } from '@/interfaces/CoverLetter'
-import { createAxios } from '@/util/axios'
+import { createAxios } from '@/lib/axios'
 import CoverLetterDialog from '@/components/CoverLetterDialog'
-import { Button } from '@/components/ui/button'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { InputGroup } from '@/components/ui/input-group'
-import  {LuSearch } from 'react-icons/lu'
+import { LuSearch } from 'react-icons/lu'
 import { EmptyState } from '@/components/ui/empty-state'
 import { HiColorSwatch } from 'react-icons/hi'
+import { AccountUser } from '@/interfaces/User'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
-export default function DashboardPage() {
+export default function ProtectedDashboardPage() {
+    return (
+        <ProtectedRoute>
+            <DashboardPage />
+        </ProtectedRoute>
+    )
+}
+
+function DashboardPage() {
     const { open, onOpen, onClose } = useDisclosure()
     const [selectedLetter, setSelectedLetter] = useState<CoverLetter | null>(null)
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState(1)
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+    const [userDetails, setUserDetails] = useState<AccountUser | null>(null)
 
-    const router = useRouter()
     const axios = createAxios()
 
     const pageSize = 10
 
     const fetchData = useMemo(() => {
         return async () => {
-            const token = localStorage.getItem('token')
-            if (!token) {
-                location.href = '/login'
-                return
-            }
-
             try {
-                const res = await axios.post('/api/account', { token })
+                const res = await axios.get('/api/user/account',  { withCredentials: true })
                 if (res.status === 200) {
-                    setUserDetails(res.data.user)
+                    setUserDetails(res.data)
                     toaster.create({
                         title: 'Success',
-                        description: 'User account fetched successfully',
+                        description: 'User fetched successfully',
                         type: 'success',
                         duration: 3000,
                     })
                 } else {
                     toaster.error({
-                        title: 'Error fetching user account',
+                        title: 'Error fetching user',
                         description: res.data.message,
                         type: 'error',
                         duration: 3000,
@@ -86,11 +86,6 @@ export default function DashboardPage() {
         }
     }, [fetchData, userDetails])
 
-    const handleLogout = async () => {
-        localStorage.removeItem('token')
-        await router.push('/login')
-    }
-
     const handleLetterClick = (letter: CoverLetter) => {
         setSelectedLetter(letter)
         onOpen()
@@ -111,9 +106,6 @@ export default function DashboardPage() {
                         {userDetails && 'Welcome back, ' + userDetails.email || <Spinner mt={2}/>}
                     </Text>
                 </Box>
-                <Button onClick={handleLogout} colorScheme='red'>
-                    Logout
-                </Button>
             </Flex>
 
             { userDetails && userDetails.coverLetters.length > 0 && (
@@ -141,8 +133,8 @@ export default function DashboardPage() {
                                 {
                                     userDetails && userDetails.coverLetters
                                         .filter(letter => letter.company.toLowerCase().includes(search.toLowerCase())
-                                            || letter.job.toLowerCase().includes(search.toLowerCase()))
-                                        .sort((a, b) => b.date - a.date)
+                                            || letter.job_title.toLowerCase().includes(search.toLowerCase()))
+                                        .sort((a, b) => new Date(b.date).getUTCMilliseconds() - new Date(a.date).getUTCMilliseconds())
                                         .slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize)
                                         .map((letter, index) => (
                                     <Table.Row key={index} onClick={() => handleLetterClick(letter)}>
@@ -150,7 +142,7 @@ export default function DashboardPage() {
                                             new Date(letter.date).toLocaleDateString()
                                         } </Table.Cell>
                                         <Table.Cell>{letter.company}</Table.Cell>
-                                        <Table.Cell>{letter.job}</Table.Cell>
+                                        <Table.Cell>{letter.job_title}</Table.Cell>
                                     </Table.Row>
                                 ))}
                             </Table.Body>

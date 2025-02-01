@@ -1,6 +1,6 @@
 export interface CoverLetter {
-    date: number,
+    date: string,
     company: string,
-    job: string,
-    content: string
+    job_title: string,
+    contents: string
 }

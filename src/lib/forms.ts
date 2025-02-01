@@ -1,4 +1,4 @@
-import { NextApiRequest } from "next";
+import { NextApiRequest } from 'next'
 import { Fields, Files, IncomingForm } from 'formidable'
 
 export const parseForm = async (req: NextApiRequest): Promise<{ fields: Fields, files: Files }> => {

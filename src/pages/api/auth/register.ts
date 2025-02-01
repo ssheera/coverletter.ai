@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import bcrypt from 'bcryptjs'
-import { createUser, scanDatabase } from '@/util/dynamo'
+import { pool } from '@/lib/database'
+import {User} from '@/interfaces/User'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -17,16 +18,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
 
-        const record = await scanDatabase(record => {
-            if (record.email === email)
-                return record
-        })
+        const { rows } = await pool.query<User>('SELECT * FROM users WHERE email = $1', [email])
 
-        if (record) {
+        if (rows.length > 0) {
             return res.status(409).json({ message: 'User already exists' })
         }
 
-        await createUser(email, hashedPassword)
+        await pool.query('INSERT INTO users (email, password) VALUES ($1, $2)', [email, hashedPassword])
 
         return res.status(201).json({ message: 'User registered' })
     } catch (error) {

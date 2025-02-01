@@ -3,21 +3,10 @@ import {
     Box,
     Flex,
     HStack,
-    Link,
+    Link
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
-
-const links = [
-    { label: 'Home', href: '/' },
-    { label: 'Analysis', href: '/analysis' },
-    { label: 'Dashboard', href: '/dashboard' },
-]
-
-const account = [
-    { label: 'Login', href: '/login' },
-    { label: 'Register', href: '/register' }
-]
-
+import { useAuth } from '@/context/AuthProvider'
 
 const NavLink: React.FC<{ href: string, children: React.ReactNode }> = ({ href, children }) => (
     <Link
@@ -36,25 +25,48 @@ const NavLink: React.FC<{ href: string, children: React.ReactNode }> = ({ href, 
 )
 
 const Navbar: React.FC = () => {
+
+    const auth = useAuth()
+
     return (
         <Box px={4} position='absolute' w='100%' shadow='lg' zIndex={2}>
             <Flex h={16} alignItems='center' justifyContent='space-between'>
                 <HStack alignItems='center'>
                     <HStack as='nav' display='flex'>
-                        { links.map((link) => (
-                            <NavLink key={link.label} href={link.href}>
-                                {link.label}
-                            </NavLink>
-                        ))}
+                        <NavLink key='home' href='/'>
+                            Home
+                        </NavLink>
+                        { auth.isAuthenticated && (
+                            <>
+                                <NavLink key='generate' href='/tasks/generate'>
+                                    Generate
+                                </NavLink>
+                                <NavLink key='resume' href='/tasks/resume'>
+                                    Tailoring
+                                </NavLink>
+                                <NavLink key='dashboard' href='/dashboard'>
+                                    Dashboard
+                                </NavLink>
+                            </>
+                        ) }
                     </HStack>
                 </HStack>
                 <HStack alignItems='flex-end'>
                     <HStack as='nav' display='flex'>
-                        { account.map((link) => (
-                            <NavLink key={link.label} href={link.href}>
-                                {link.label}
+                        { !auth.isAuthenticated ? (
+                            <>
+                                <NavLink key='login' href='/auth/login'>
+                                    Login
+                                </NavLink>
+                                <NavLink key='register' href='/auth/register'>
+                                    Register
+                                </NavLink>
+                            </>
+                        ) : (
+                            <NavLink key='logout' href='/auth/logout'>
+                                Logout
                             </NavLink>
-                        ))}
+                        )}
                     </HStack>
                 </HStack>
             </Flex>

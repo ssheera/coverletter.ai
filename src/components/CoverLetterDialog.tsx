@@ -22,7 +22,7 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                                                                                                            data
                                                                                                        }) => {
 
-    const dialogSize: "xs" | "lg" = useBreakpointValue({ base: 'xs', md: 'lg' })!
+    const dialogSize: 'xs' | 'lg' = useBreakpointValue({ base: 'xs', md: 'lg' })!
 
     return <Box>
         <DialogRoot scrollBehavior='inside'  size={dialogSize} open={open}
@@ -35,10 +35,10 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                 <DialogBody>
                     <DataListRoot orientation='vertical'>
                         <DataListItem label='Company' value={data.company}/>
-                        <DataListItem label='Title' value={data.job}/>
+                        <DataListItem label='Title' value={data.job_title}/>
                         <DataListItem label='Content'
                                       value={<Text whiteSpace='pre-wrap'>
-                                          {data.content}
+                                          {data.contents}
                                       </Text>}
                                       alignItems='flex-start'
                         />
@@ -48,14 +48,14 @@ const CoverLetterDialog: React.FC<{ open: boolean, onClose: () => void, data: Co
                     marginTop: '5px',
                     justifyContent: 'flex-start'
                 }}>
-                    <ClipboardRoot value={data.content} timeout={500}>
+                    <ClipboardRoot value={data.contents} timeout={500}>
                         <ClipboardButton size='xs'/>
                     </ClipboardRoot>
                     <Button
                         size='xs'
                         variant='surface'
                         onClick={async () => {
-                            const content = data.content.split('\n')
+                            const content = data.contents.split('\n')
 
                             const doc = new Document({
                                 sections: [

@@ -1,0 +1,29 @@
+You will be given a resume file and a job description. Your task is to write a cover letter based on the resume and job description. 
+
+The cover letter should be tailored to the job description and should highlight the candidate's skills and experience.
+
+Follow this structure: 
+1. Introduction, needs to be compelling
+2. Why I am the perfect candidate
+3. Why this is the perfect role for me
+4. Why I am the perfect candidate for this role with some context to the role
+5. Talk about anything the company has done or is doing and why you are interested in it
+6. Talk about your skills and experience, EMPHASISE on PAST WORK EXPERIENCE
+7. Closing
+8. Thank you for considering my application
+9. Sincerely,
+10. Your Name
+
+Now after following this structure,
+make sure you tick these boxes, if not ticked? then rewrite it all!
+
+[ ] - Show humanity
+[ ] - Show effort
+[ ] - Address gaps in your career
+[ ] - Is the company mentioned? 
+[ ] - Is how they are the perfect fit mentioned?
+[ ] - Used professional yet engaging language, and end with a confident call to action?
+[ ] - Are their achievements aligned with the company?
+                        
+
+PUT HEAVY HEAVY EMPHASIS ON SKILLS, BENEFITS AND MORE ON SKILLS. MAKE IT CLEAR WITH SKILLS THAT I DO NOT HAVE.

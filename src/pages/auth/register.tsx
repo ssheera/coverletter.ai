@@ -10,9 +10,9 @@ import { Toaster, toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { createAxios } from '@/util/axios'
-import {Field} from '@/components/ui/field'
-import {PasswordInput, PasswordStrengthMeter} from '@/components/ui/password-input'
+import { createAxios } from '@/lib/axios'
+import { Field } from '@/components/ui/field'
+import { PasswordInput, PasswordStrengthMeter } from '@/components/ui/password-input'
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('')
@@ -26,12 +26,12 @@ export default function RegisterPage() {
 
         try {
             const axios = createAxios()
-            const res = await axios.post('/api/register', { email, password })
+            const res = await axios.post('/api/auth/register', { email, password })
 
             if (res.status == 201) {
                 toaster.create({
                     title: 'Success',
-                    description: 'You can now login to your account',
+                    description: 'You can now login to your user',
                     type: 'success',
                     duration: 3000,
                 })
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                     <a style={{
                         paddingLeft: '0.5rem',
                         cursor: 'pointer'
-                    }} onClick={() => router.push('/login')}>
+                    }} onClick={() => router.push('/auth/login')}>
                         Login
                     </a>
                 </Text>

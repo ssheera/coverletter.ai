@@ -1,0 +1,29 @@
+Review the provided JSON of resume data and edit the experience section so it is tailored to match a given job description. Emphasize relevant skills and experiences even if they originally seem unrelated.
+
+# Steps
+
+1. **Understanding the Context**:
+   - Examine the job description to grasp the key roles, responsibilities, and skills required.
+   - Analyze the experience data from the JSON to identify relevant skills, projects, and accomplishments.
+
+2. **Customization**:
+   - Extract key skills and responsibilities from the job description.
+   - Emphasize relevant experiences within the resume's JSON, highlighting the alignment with the job role.
+
+3. **Integration**:
+   - Modify any unrelated portions to thematically align with the job's requirements.
+   - Use language that is professional and reflective of HR expectations.
+
+4. **Formatting**:
+   - Rewrite the experience section in a concise manner with each point starting on a new line, ensuring there are no gaps or bullet points.
+
+# Output Format
+
+The output should be rewritten in a series of lines where each point starts on a new line with no bullet points, numbering, or extra spaces. The language should clearly align with the job description and maintain a professional tone.
+Make sure to INCLUDE \n at the end of each line OR IT WILL MESS UP THE FRONTEND.
+
+# Notes
+
+- Connect existing experiences with the desired job role creatively.
+- Ensure the tone remains professional and accurately reflects the company's values.
+- DO this for ALL experiences, work, and extracurricular activities. <<< THIS IS IMPORTANT BUT NOT EDUCATION!!!!

@@ -9,7 +9,7 @@ import { Toaster, toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
 import React, {useEffect, useState} from 'react'
 import { CoverLetter } from '@/interfaces/CoverLetter'
-import { createAxios } from '@/util/axios'
+import { createAxios } from '@/lib/axios'
 import { FileUploadDropzone, FileUploadList, FileUploadRoot } from '@/components/ui/file-button'
 import { FileChangeDetails } from '@zag-js/file-upload'
 import CoverLetterDialog from '@/components/CoverLetterDialog'
@@ -26,8 +26,19 @@ import {
     StepsRoot,
     StepsPrevTrigger
 } from '@/components/ui/steps'
+import {useAuth} from '@/context/AuthProvider'
+import {useRouter} from 'next/router'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
-export default function AnalysisPage() {
+export default function ProtectedAnalysisPage() {
+    return (
+        <ProtectedRoute>
+            <AnalysisPage />
+        </ProtectedRoute>
+    )
+}
+
+function AnalysisPage() {
     const { open, onOpen, onClose } = useDisclosure()
     const [resume, setResume] = useState<File | null>(null)
     const [jobDescription, setJobDescription] = useState('')
@@ -37,16 +48,21 @@ export default function AnalysisPage() {
     const [llm, setLLM] = useState('Gemini')
     const [step, setStep] = useState(0)
 
+    const auth = useAuth()
+
+    const router = useRouter()
+
     const apis = createListCollection({
-        items: ['OpenAI', 'Gemini'],
+        items: ['Gemini'],
     })
 
     const axios = createAxios()
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (!token) location.href = '/login'
-    }, [])
+        if (!auth.loading && !auth.isAuthenticated) {
+            router.push('/login').catch(console.error)
+        }
+    }, [auth.isAuthenticated, auth.loading, router])
 
     const handleResumeChange = (details: FileChangeDetails) => {
         if (details.acceptedFiles) {
@@ -75,16 +91,14 @@ export default function AnalysisPage() {
         if (!resume || !jobDescription) return
         try {
             setIsProcessing(true)
-            const token = localStorage.getItem('token')
             const formData = new FormData()
-            formData.append('token', token as string)
             formData.append('file', resume, 'resume')
             formData.append('description', jobDescription)
             formData.append('llm', llm)
             if (prompt) {
                 formData.append('prompt', prompt)
             }
-            const res = await axios.post('/api/process', formData)
+            const res = await axios.post('/api/tasks/generate', formData, { withCredentials: true })
             if (res.status == 201) {
                 setCoverLetter(res.data.response)
                 toaster.create({
@@ -138,7 +152,7 @@ export default function AnalysisPage() {
                         <GridItem p={6} shadow='lg'>
                             <Heading size='lg' mb={4}>Resume</Heading>
                             <Text fontSize='sm' color='gray' mb={4}>
-                                Upload your resume to generate a cover letter in PDF format
+                                Upload your resume to generate a cover letter
                             </Text>
                             <FileUploadRoot
                                 onFileChange={handleResumeChange}
