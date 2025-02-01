@@ -16,7 +16,6 @@ import {Field} from '@/components/ui/field'
 import {LuMinus, LuPlus} from 'react-icons/lu'
 import {Checkbox} from '@/components/ui/checkbox'
 import {createAxios} from '@/lib/axios'
-import {useRouter} from 'next/router'
 import {Toaster, toaster} from '@/components/ui/toaster'
 import {
     AlignmentType,
@@ -48,7 +47,6 @@ export default function ProtectedResumePage() {
 function ResumePage() {
     
     const axios = createAxios()
-    const router = useRouter()
 
     const [forename, setForename] = React.useState('')
     const [surname, setSurname] = React.useState('')
