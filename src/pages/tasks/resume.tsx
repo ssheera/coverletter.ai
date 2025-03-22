@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import React, {useEffect, useMemo, useState} from 'react'
 import {Field} from '@/components/ui/field'
-import {LuMinus, LuPlus} from 'react-icons/lu'
+import {LuArrowDown, LuArrowUp, LuMinus, LuPlus, LuTrash} from 'react-icons/lu'
 import {Checkbox} from '@/components/ui/checkbox'
 import {createAxios} from '@/lib/axios'
 import {Toaster, toaster} from '@/components/ui/toaster'
@@ -339,6 +339,13 @@ function ResumePage() {
         setSections(newSections)
     }
 
+    const removeExperienceIndex = (section: number, index: number) => {
+        if (sections[section].items.length === 1) return
+        const newSections = [...sections]
+        newSections[section].items.splice(index, 1)
+        setSections(newSections)
+    }
+
     const addSkill = () => {
         setSkills([...skills, {type: '', items: ''}])
     }
@@ -446,6 +453,14 @@ function ResumePage() {
         } finally {
             setProcessing(false)
         }
+    }
+
+    const moveExperience = (section: number, index: number, direction: number) => {
+        const newSections = [...sections]
+        const temp = newSections[section].items[index]
+        newSections[section].items[index] = newSections[section].items[index + direction]
+        newSections[section].items[index + direction] = temp
+        setSections(newSections)
     }
 
     return (
@@ -666,6 +681,17 @@ function ResumePage() {
                                                     }}
                                                 />
                                             </Field>
+                                            <HStack gap='4'>
+                                                <IconButton variant='subtle' size='sm' onClick={() => moveExperience(index, i, -1)} disabled={i === 0}>
+                                                    <LuArrowUp/>
+                                                </IconButton>
+                                                <IconButton variant='subtle' size='sm' onClick={() => moveExperience(index, i, 1)} disabled={i === sections[index].items.length - 1}>
+                                                    <LuArrowDown/>
+                                                </IconButton>
+                                                <IconButton variant='subtle' size='sm' onClick={() => removeExperienceIndex(index, i)}>
+                                                    <LuTrash/>
+                                                </IconButton>
+                                            </HStack>
                                         </Flex>
                                     ))}
                                 </Flex>
