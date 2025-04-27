@@ -86,6 +86,15 @@ function DashboardPage() {
         }
     }, [fetchData, userDetails])
 
+
+    const filteredLetters = useMemo(() => {
+        if (!userDetails) return []
+        return userDetails.coverLetters
+          .filter(letter => letter.company.toLowerCase().includes(search.toLowerCase())
+            || letter.job_title.toLowerCase().includes(search.toLowerCase()))
+          .reverse()
+    }, [userDetails, search])
+
     const handleLetterClick = (letter: CoverLetter) => {
         setSelectedLetter(letter)
         onOpen()
@@ -131,12 +140,9 @@ function DashboardPage() {
                             </Table.Header>
                             <Table.Body>
                                 {
-                                    userDetails && userDetails.coverLetters
-                                        .filter(letter => letter.company.toLowerCase().includes(search.toLowerCase())
-                                            || letter.job_title.toLowerCase().includes(search.toLowerCase()))
-                                        .sort((a, b) => new Date(b.date).getUTCMilliseconds() - new Date(a.date).getUTCMilliseconds())
-                                        .slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize)
-                                        .map((letter, index) => (
+                                    filteredLetters
+                                      .slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize)
+                                      .map((letter, index) => (
                                     <Table.Row key={index} onClick={() => handleLetterClick(letter)}>
                                         <Table.Cell> {
                                             new Date(letter.date).toLocaleDateString()
@@ -151,7 +157,7 @@ function DashboardPage() {
                         <PaginationRoot
                             size='xs'
                             page={page}
-                            count={userDetails.coverLetters.length}
+                            count={filteredLetters.length}
                             pageSize={pageSize}
                             onPageChange={(e) => setPage(e.page)}
                             style={{

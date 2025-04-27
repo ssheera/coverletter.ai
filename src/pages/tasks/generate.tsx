@@ -41,13 +41,14 @@ function AnalysisPage() {
     const [resume, setResume] = useState<File | null>(null)
     const [jobDescription, setJobDescription] = useState('')
     const [prompt, setPrompt] = useState('')
+    const [addonData, setAddonData] = useState('')
     const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
-    const [llm, setLLM] = useState('Gemini')
+    const [llm, setLLM] = useState('OpenAI')
     const [step, setStep] = useState(0)
 
     const apis = createListCollection({
-        items: ['Gemini'],
+        items: ['Gemini', 'OpenAI'],
     })
 
     const axios = createAxios()
@@ -75,6 +76,10 @@ function AnalysisPage() {
         setPrompt(event.target.value)
     }
 
+    const handleAddonDataChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setAddonData(event.target.value)
+    }
+
     const generateCoverLetter = async () => {
         if (!resume || !jobDescription) return
         try {
@@ -85,6 +90,9 @@ function AnalysisPage() {
             formData.append('llm', llm)
             if (prompt) {
                 formData.append('prompt', prompt)
+            }
+            if (addonData) {
+                formData.append('addonData', addonData)
             }
             const res = await axios.post('/api/tasks/generate', formData, { withCredentials: true })
             if (res.status == 201) {
@@ -168,6 +176,19 @@ function AnalysisPage() {
                                 value={prompt}
                                 onChange={handlePromptChange}
                                 placeholder='Enter a custom prompt here'
+                                size='lg'
+                                h='200px'
+                                mb={4}
+                            />
+                            <Text fontSize='sm' color='gray' mb={4}>
+                                Enter additional data to pass to the AI
+                            </Text>
+                            <Textarea
+                                resize='none'
+                                fontSize='sm'
+                                value={addonData}
+                                onChange={handleAddonDataChange}
+                                placeholder='Enter additional data here'
                                 size='lg'
                                 h='200px'
                                 mb={4}

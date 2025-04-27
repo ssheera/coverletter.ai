@@ -3,8 +3,7 @@ import {processText} from '@/lib/llm'
 import PQueue from 'p-queue'
 import os from 'os'
 import { getSession } from '@/lib/session'
-import { pool } from '@/lib/database'
-import {ClientUser} from '@/interfaces/User'
+import {prisma} from "@/lib/prisma";
 
 const llmQueue = new PQueue({ concurrency: os.cpus().length })
 
@@ -20,17 +19,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const { rows } = await pool.query<ClientUser>('SELECT id, email FROM users WHERE id = $1', [session.user])
+    const user = await prisma.users.findFirst({
+        where: { id: session.user },
+        cacheStrategy: { ttl: 60 }
+    })
 
-    if (rows.length === 0) {
-        return res.status(401).json({ message: 'Unauthorized' })
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
     try {
 
-        const { input, prompt, llm } = req.body
+        const { text, jobDescription, llm } = req.body
 
-        llmQueue.add(() => processText(input, prompt, llm))
+        llmQueue.add(() => processText(text, jobDescription, llm))
             .then(response => {
                 res.status(201).json({ response })
             })

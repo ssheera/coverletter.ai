@@ -1,29 +1,67 @@
-You will be given a resume file and a job description. Your task is to write a cover letter based on the resume and job description. 
+You will be given a resume file and a job description. Your task is to write a cover letter based on the resume and job description. The cover letter should be tailored to the job description and highlight the candidate’s skills and experience.
 
-The cover letter should be tailored to the job description and should highlight the candidate's skills and experience.
+Follow this structure (Don't actually add in "Opening" "Why I'm...." as titles, dont be stupid, be professional):
 
-Follow this structure: 
-1. Introduction, needs to be compelling
-2. Why I am the perfect candidate
-3. Why this is the perfect role for me
-4. Why I am the perfect candidate for this role with some context to the role
-5. Talk about anything the company has done or is doing and why you are interested in it
-6. Talk about your skills and experience, EMPHASISE on PAST WORK EXPERIENCE
-7. Closing
-8. Thank you for considering my application
-9. Sincerely,
-10. Your Name
+Opening: Start with a strong hook that captures the reader’s attention and introduces the candidate’s enthusiasm for the role and company. Consider using a personal anecdote or a specific achievement that relates to the role.
+Why I’m the Perfect Candidate: Highlight the candidate’s key skills and experiences that align with the job requirements. Use quantifiable achievements to demonstrate impact.
+Why This Role is Perfect for Me: Explain why the role aligns with the candidate’s career goals and interests.
+Why I’m the Perfect Candidate for This Role: Provide specific examples of how the candidate’s skills and experiences make them a great fit for the role.
+Company Interest: Discuss what the company is doing that excites the candidate and why they want to be a part of it. Mention specific projects, initiatives, or values of the company.
+Skills and Experience: Emphasize the candidate’s relevant skills and past work experiences, making it clear how they benefit the company.
+Closing: End with a confident call to action, expressing eagerness for the opportunity to discuss further.
+Thank You: Thank the reader for considering the application.
+Sincerely: Sign off with the candidate’s name.
+After following this structure, ensure the cover letter meets these criteria:
 
-Now after following this structure,
-make sure you tick these boxes, if not ticked? then rewrite it all!
+Demonstrates the candidate’s personality and passion for the role.
+Shows effort in researching the company and role.
+Addresses any gaps in the candidate’s career history positively.
+Mentions the company name and specific details about the role.
+Clearly explains why the candidate is the perfect fit for the role.
+Uses professional yet engaging language.
+Aligns the candidate’s achievements with the company’s goals and values.
 
-[ ] - Show humanity
-[ ] - Show effort
-[ ] - Address gaps in your career
-[ ] - Is the company mentioned? 
-[ ] - Is how they are the perfect fit mentioned?
-[ ] - Used professional yet engaging language, and end with a confident call to action?
-[ ] - Are their achievements aligned with the company?
-                        
+Additional Instructions:
 
-PUT HEAVY HEAVY EMPHASIS ON SKILLS, BENEFITS AND MORE ON SKILLS. MAKE IT CLEAR WITH SKILLS THAT I DO NOT HAVE.
+Put heavy emphasis on the candidate’s relevant skills and how they benefit the company.
+If there are key skills mentioned in the job description that the candidate does not possess, briefly acknowledge them and express eagerness to learn or highlight transferable skills.
+Ensure the cover letter reflects the candidate’s unique voice and personality.
+Tips for Each Section:
+
+Opening: Start with a personal touch or a notable achievement. For example, “As a software engineer with a passion for machine learning, I was thrilled to see your job posting for a Machine Learning Engineer.”
+Why I’m the Perfect Candidate: Use numbers to show impact. For example, “In my previous role, I led a team that increased sales by 20% through the implementation of a new CRM system.”
+Company Interest: Reference specific company initiatives. For example, “I am particularly excited about your company’s commitment to sustainability, as evidenced by your recent initiative to reduce carbon emissions.”
+Addressing Career Gaps: Frame gaps positively. For example, “During my time away from the workforce, I took the opportunity to develop my skills in [relevant area] through [coursework, volunteering, etc.].”
+Additional Note:
+
+Ensure the cover letter directly references specific skills and experiences from the resume that align with the job description. Highlight how these make the candidate a strong fit for the role.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Your cover letter is your written sales pitch. You've got a resume that summarizes everything. Now you have to write out a more complete, professional description of you and what you can offer a given company. 
+Here's a sample cover letter to get you started:
+
+Dear _________,
+
+I hope your day is going well! My name is _________, and I'm a _________ at _________. I am very interested in working for _________ next _________. Your commitment to _________ and _________ that I saw on the website inspired me! The products you build and the values you stand for make _________ seem like an ideal workplace for me. A little about me, I [insert relevant work experience, extracurriculars, and projects here]. I think these experiences would make me a great candidate for you.
+
+Please let me know if there's anything else you need from me. I look forward to hearing from you! I can be reached at _________ and _________
+
+Best regards,
+__________
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Now, remember, this is just a sample. You can write a cover letter in any format you'd like. But, you should be sure to include the following:
+
+Who - Who you are. Easy enough.
+Where - Where you're coming from.
+Why - Why you're interested in this company, and show that you researched them.
+What - What you can bring to the table.
+When - When you're available to start, and when they can contact you.
+How - How they can reach you.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+If the candidate has no proper relevent experience, add huge emphasis on needing an opportunity to start their career
+

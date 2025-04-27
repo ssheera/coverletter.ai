@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '@/lib/session'
-import { pool } from '@/lib/database'
-import {AccountUser, ClientUser} from '@/interfaces/User'
-import {CoverLetter} from '@/interfaces/CoverLetter'
+import {prisma} from "@/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -16,19 +14,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const [{ rows: rows }, { rows: coverLetters }] = await Promise.all([
-        pool.query<ClientUser>('SELECT id, email FROM users WHERE id = $1', [session.user]),
-        pool.query<CoverLetter>('SELECT date, company, job_title, contents FROM coverletters WHERE user_fk = $1', [session.user])
-    ])
+    const user = await prisma.users.findUnique({
+        where: { id: session.user },
+        select: {
+            id: true,
+            email: true,
+            coverletters: true
+        },
+        cacheStrategy: { ttl: 30 }
+    })
 
-    if (rows.length === 0) {
-        return res.status(401).json({ message: 'Unauthorized' })
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
     return res.status(200).json({
-        id: rows[0].id,
-        email: rows[0].email,
-        coverLetters: coverLetters
-    } as AccountUser)
-
+        id: user.id,
+        email: user.email,
+        coverLetters: user.coverletters,
+    });
 }

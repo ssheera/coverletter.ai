@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '@/lib/session'
-import { pool } from '@/lib/database'
+import {prisma} from "@/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -10,11 +10,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const { rows } = await pool.query('SELECT id, email FROM users WHERE id = $1', [session.user])
+    const user = await prisma.users.findUnique({
+        where: { id: session.user },
+        select: {
+            id: true,
+            email: true,
+        },
+        cacheStrategy: { ttl: 60 }
+    })
 
-    if (rows.length === 0) {
+    if (!user) {
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    return res.status(200).json({ user: rows[0] })
+    return res.status(200).json({ user: user })
 }

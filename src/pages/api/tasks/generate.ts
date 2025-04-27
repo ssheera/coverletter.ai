@@ -5,8 +5,7 @@ import fs from 'fs'
 import PQueue from 'p-queue'
 import os from 'os'
 import { getSession } from '@/lib/session'
-import { pool } from '@/lib/database'
-import {ClientUser} from '@/interfaces/User'
+import {prisma} from "@/lib/prisma";
 
 const llmQueue = new PQueue({ concurrency: os.cpus().length })
 
@@ -22,10 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const { rows } = await pool.query<ClientUser>('SELECT id, email FROM users WHERE id = $1', [session.user])
+    const user = await prisma.users.findFirst({
+        where: { id: session.user },
+        select: { id: true },
+        cacheStrategy: { ttl: 60 }
+    })
 
-    if (rows.length === 0) {
-        return res.status(401).json({ message: 'Unauthorized' })
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
     try {
@@ -39,6 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const description = fields.description[0] as string
         const llm = fields.llm ? fields.llm[0] as string : ''
         const prompt = fields.prompt ? fields.prompt[0] as string : ''
+        const addonData = fields.addonData ? fields.addonData[0] as string : ''
 
         if (!files.file || files.file.length !== 1) {
             return res.status(400).json({ message: 'Missing resume to upload' })
@@ -53,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             filePath = newFilePath
         }
 
-        llmQueue.add(() => processResume(rows[0].id, filePath, description, prompt, llm))
+        llmQueue.add(() => processResume(user.id, filePath, description, prompt, addonData, llm))
             .then(response => {
                 res.status(201).json({ response })
             })

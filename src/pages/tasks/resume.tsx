@@ -37,6 +37,7 @@ import {Button} from '@/components/ui/button'
 import RewriteTextArea from '@/components/RewriteTextArea'
 import {ProfileLink, ResumeData, Section, Skill} from '@/interfaces/ResumeData'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { HiRefresh } from 'react-icons/hi'
 
 export default function ProtectedResumePage() {
     return <ProtectedRoute>
@@ -117,7 +118,7 @@ function ResumePage() {
         function name(name: string) {
             return new Paragraph({
                 children: [new TextRun({
-                    text: name, bold: true, size: 15 * 2, font: 'Calibri'
+                    text: name, bold: true, size: 24 * 2, font: 'Calibri'
                 }),], spacing: {
                     after: 5 / 0.05
                 }, alignment: 'center',
@@ -129,19 +130,19 @@ function ResumePage() {
             return [new TextRun({
                         text: name, underline: {
                             type: 'single'
-                        }, size: 10.5 * 2, font: 'Calibri'
+                        }, size: 11 * 2, font: 'Calibri'
                     }), new TextRun({
-                        text: ': ', size: 10.5 * 2, font: 'Calibri'
+                        text: ': ', size: 11 * 2, font: 'Calibri'
                     }), new ExternalHyperlink({
                         link: link ?? cover, children: [new TextRun({
-                            text: cover, size: 10.5 * 2, font: 'Calibri', color: '0000FF', underline: {
+                            text: cover, size: 11 * 2, font: 'Calibri', color: '0000FF', underline: {
                                 type: 'single'
                             }
                         })]
                     }), !end ? new TextRun({
-                        text: ' | ', size: 10.5 * 2, font: 'Calibri'
+                        text: ' | ', size: 11 * 2, font: 'Calibri'
                     }) : new TextRun({
-                        text: '', size: 10.5 * 2, font: 'Calibri'
+                        text: '', size: 11 * 2, font: 'Calibri'
                     })]
         }
 
@@ -405,7 +406,7 @@ function ResumePage() {
         const a = document.createElement('a')
         a.href = url
         a.download = `Resume.docx`
-        a.click()
+        a.click()   
     }
 
     const handleProcess = async () => {
@@ -422,7 +423,6 @@ function ResumePage() {
         const res = await axios.post('/api/tasks/resume', { data, llm }, { withCredentials: true })
 
         try {
-            console.log(res)
             if (res.status == 201) {
                 const data = res.data.response
                 setForename(data.forename)
@@ -430,6 +430,7 @@ function ResumePage() {
                 setProfileLinks(data.profileLinks)
                 setSections(data.sections)
                 setSkills(data.skills)
+                console.log(data)
                 toaster.create({
                     title: 'Success',
                     description: 'Resume processed successfully',
@@ -744,8 +745,8 @@ function ResumePage() {
                         <Field label='Job Description'>
                             <Textarea
                                 placeholder='Paste the job description here'
-                                minHeight='500px'
                                 resize='none'
+                                minHeight='300px'
                                 variant='subtle'
                                 value={jobDescription}
                                 onChange={(e) => setJobDescription(e.target.value)}
@@ -763,6 +764,10 @@ function ResumePage() {
 
                             <IconButton disabled={processing} variant='subtle' onClick={handleProcess}>
                                 { processing ? <Spinner size='sm'/> : <TbSparkles/> }
+                            </IconButton>
+
+                            <IconButton variant='subtle' onClick={fetchData}>
+                                <HiRefresh/>
                             </IconButton>
                         </HStack>
 

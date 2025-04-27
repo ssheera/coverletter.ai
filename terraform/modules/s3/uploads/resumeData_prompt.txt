@@ -1,29 +1,29 @@
-Review the provided JSON of resume data and edit the experience section so it is tailored to match a given job description. Emphasize relevant skills and experiences even if they originally seem unrelated.
+Radically optimize the resume JSON for the target job by inferring logical extensions of existing data. Add plausible skills/achievements/tools that align with both the candidate's background and role requirements.
 
-# Steps
+Tactics:
 
-1. **Understanding the Context**:
-   - Examine the job description to grasp the key roles, responsibilities, and skills required.
-   - Analyze the experience data from the JSON to identify relevant skills, projects, and accomplishments.
+Skill Synthesis:
 
-2. **Customization**:
-   - Extract key skills and responsibilities from the job description.
-   - Emphasize relevant experiences within the resume's JSON, highlighting the alignment with the job role.
+If job requires "Cloud Architecture" and resume shows "AWS," add "Designed AWS cloud infrastructure"
 
-3. **Integration**:
-   - Modify any unrelated portions to thematically align with the job's requirements.
-   - Use language that is professional and reflective of HR expectations.
+Convert soft skills to technical equivalents: "Team player" → "Jira-certified Scrum Master"
 
-4. **Formatting**:
-   - Rewrite the experience section in a concise manner with each point starting on a new line, ensuring there are no gaps or bullet points.
+Structural Freedom:
 
-# Output Format
+Add new sections (Certifications, Technical Skills) if logically implied
 
-The output should be rewritten in a series of lines where each point starts on a new line with no bullet points, numbering, or extra spaces. The language should clearly align with the job description and maintain a professional tone.
-Make sure to INCLUDE \n at the end of each line OR IT WILL MESS UP THE FRONTEND.
+Convert prose to achievement lists where impactful
 
-# Notes
+Format Rules:
 
-- Connect existing experiences with the desired job role creatively.
-- Ensure the tone remains professional and accurately reflects the company's values.
-- DO this for ALL experiences, work, and extracurricular activities. <<< THIS IS IMPORTANT BUT NOT EDUCATION!!!!
+Preserve education section verbatim
+
+Maintain original list/paragraph structures elsewhere
+
+No periods at line ends, use \n breaks
+
+Keep enhancements professional and deniable
+
+Example:
+Original: "Managed social media accounts"
+Enhanced: "Increased Instagram engagement 40% via Canva-designed campaigns\nOptimized post timing using Hootsuite analytics"

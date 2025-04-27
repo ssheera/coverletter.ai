@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from '@/lib/session'
-import { pool } from '@/lib/database'
-import { User } from '@/interfaces/User'
+import {prisma} from "@/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -15,13 +14,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const { rows } = await pool.query<User>('SELECT * FROM users WHERE id = $1', [session.user])
+    const user = await prisma.users.findUnique({
+        where: { id: session.user },
+        select: {
+            id: true,
+            data: true
+        },
+        cacheStrategy: { ttl: 60 }
+    })
 
-    if (rows.length === 0) {
+    if (!user) {
         return res.status(404).json({ message: 'User not found' })
     }
-
-    const user = rows[0]
 
     const { data, request } = req.body
 
@@ -33,7 +37,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case 'save': {
             if (!data)
                 return res.status(400).json({ message: 'Bad request' })
-            await pool.query('UPDATE users SET data = $1 WHERE id = $2', [data, user.id])
+            await prisma.users.update({
+                where: { id: user.id },
+                data: { data: data }
+            })
             break
         }
         case 'load': {
@@ -42,5 +49,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(200).json({ status: true, message: 'success' })
-
 }

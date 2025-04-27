@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { User } from '@/interfaces/User'
 import bcrypt from 'bcryptjs'
-import { pool } from '@/lib/database'
 import { getSession } from '@/lib/session'
+import {prisma} from "@/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -16,14 +15,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
+        const user = await prisma.users.findFirst({
+            where: {
+                email: email
+            }
+        })
 
-        const { rows } = await pool.query<User>('SELECT * FROM users WHERE email = $1', [email])
-
-        if (rows.length === 0) {
+        if (!user) {
             return res.status(409).json({ message: 'Invalid email or password' })
         }
-
-        const user = rows[0]
 
         const isValid = await bcrypt.compare(password, user.password)
         if (!isValid) {
