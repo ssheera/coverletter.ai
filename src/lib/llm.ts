@@ -143,7 +143,7 @@ export const processResume = async (userId: number, resumePath: string, descript
     }
 
     const response: CoverLetter = {
-        date: new Date().toISOString(),
+        date: new Date(),
         company: coverLetter.company ?? 'N/A',
         job_title: coverLetter.job_title ?? 'N/A',
         contents: coverLetter.contents ?? 'N/A'

@@ -145,7 +145,7 @@ function DashboardPage() {
                                       .map((letter, index) => (
                                     <Table.Row key={index} onClick={() => handleLetterClick(letter)}>
                                         <Table.Cell> {
-                                            new Date(letter.date).toLocaleDateString()
+                                            letter.date.toLocaleDateString()
                                         } </Table.Cell>
                                         <Table.Cell>{letter.company}</Table.Cell>
                                         <Table.Cell>{letter.job_title}</Table.Cell>
