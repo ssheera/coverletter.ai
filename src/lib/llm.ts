@@ -128,7 +128,7 @@ export const processResume = async (userId: number, resumePath: string, descript
                         }
                     }
                 },
-                reasoning_effort: OPENAI_MODEL.startsWith("o") ? 'high' : null,
+                reasoning_effort: OPENAI_MODEL.startsWith("o") ? 'high' : undefined,
                 store: false
             })
     
