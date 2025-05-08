@@ -51,6 +51,13 @@ function DashboardPage() {
             try {
                 const res = await axios.get('/api/user/account',  { withCredentials: true })
                 if (res.status === 200) {
+                    res.data.coverLetters = res.data.coverLetters.map((letter: CoverLetter) => {
+                        return {
+                            ...letter,
+                            date: new Date(letter.date)
+                        }
+                    })
+
                     setUserDetails(res.data)
                     toaster.create({
                         title: 'Success',
