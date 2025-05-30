@@ -80,3 +80,8 @@ Due to the AWS Free Tier expiring, the database has been migrated to **Prisma's 
    ```
 
 7. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Future Updates
+- Migration to AWS Lambda + SQS - Vercel doesn't handle background jobs like I had hoped, and I need to get around the 60s runtime restriction
+- Switching to TailwindCSS for the frontend
+- Improved design
